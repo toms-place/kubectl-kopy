@@ -1,25 +1,15 @@
 # kubectl-kopy
 
-A `kubectl` plugin to gather all PVC and output all pvcs that doesn't belong to any workloads.
-This plugins checks for standard kubernetes workloads : 
-- DaemonSet
-- Deployment
-- Job
-- StatefulSet
-
+A `kubectl` plugin to gather all PVs and select one to download its content.
 
 ## Quick Start
 
 Install kopy via [krew](https://krew.sigs.k8s.io/)
 
-```
+```shell
 kubectl krew install kopy
 
-# Scan for all unused volumes in current context and default namespace
+# Download the contents of a persistent volume in the current context
 
-kubectl kopy
+kubectl kopy [PV] [LOCAL_DIR]
 ```
-
-## Demo
-
-![Scan Unused pvc on namespace infra](assets/example-1.png)
