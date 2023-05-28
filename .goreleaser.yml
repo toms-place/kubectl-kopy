@@ -5,7 +5,7 @@ release:
     name: kubectl-kopy
 builds:
   - id: kubectl-kopy
-    binary: kopy
+    binary: kubectl-kopy
     goos:
     - linux
     - windows
