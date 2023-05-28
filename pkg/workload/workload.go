@@ -3,10 +3,37 @@ package workload
 import (
 	"fmt"
 
-	"github.com/dirathea/kubectl-unused-volumes/pkg/api"
+	"github.com/websi96/kubectl-kopy/pkg/api"
 	appsV1 "k8s.io/api/apps/v1"
 	batchV1 "k8s.io/api/batch/v1"
+	coreV1 "k8s.io/api/core/v1"
 )
+
+type pod struct {
+	coreV1.Pod
+}
+
+func (d pod) IsEmpty() bool {
+	return d.Status.Phase != coreV1.PodRunning
+}
+
+func (d pod) GetVolumeClaimNames() (volumeClaimNames []string) {
+	volumes := d.Spec.Volumes
+	for _, vol := range volumes {
+		if vol.PersistentVolumeClaim != nil {
+			volumeClaimNames = append(volumeClaimNames, vol.PersistentVolumeClaim.ClaimName)
+		}
+	}
+	return
+}
+
+func (d pod) GetName() string {
+	return d.Name
+}
+
+func podWorkload(workload coreV1.Pod) api.Workload {
+	return pod{workload}
+}
 
 type deployment struct {
 	appsV1.Deployment
@@ -16,11 +43,11 @@ func (d deployment) IsEmpty() bool {
 	return d.Status.Replicas == 0
 }
 
-func (d deployment) GetVolumeNames() (volumeNames []string) {
+func (d deployment) GetVolumeClaimNames() (volumeClaimNames []string) {
 	volumes := d.Spec.Template.Spec.Volumes
 	for _, vol := range volumes {
 		if vol.PersistentVolumeClaim != nil {
-			volumeNames = append(volumeNames, vol.PersistentVolumeClaim.ClaimName)
+			volumeClaimNames = append(volumeClaimNames, vol.PersistentVolumeClaim.ClaimName)
 		}
 	}
 	return
@@ -38,11 +65,11 @@ type daemonSet struct {
 	appsV1.DaemonSet
 }
 
-func (d daemonSet) GetVolumeNames() (volumeNames []string) {
+func (d daemonSet) GetVolumeClaimNames() (volumeClaimNames []string) {
 	volumes := d.Spec.Template.Spec.Volumes
 	for _, vol := range volumes {
 		if vol.PersistentVolumeClaim != nil {
-			volumeNames = append(volumeNames, vol.PersistentVolumeClaim.ClaimName)
+			volumeClaimNames = append(volumeClaimNames, vol.PersistentVolumeClaim.ClaimName)
 		}
 	}
 	return
@@ -64,11 +91,11 @@ type statefulSet struct {
 	appsV1.StatefulSet
 }
 
-func (s statefulSet) GetVolumeNames() (volumeNames []string) {
+func (s statefulSet) GetVolumeClaimNames() (volumeClaimNames []string) {
 	volumes := s.Spec.Template.Spec.Volumes
 	for _, vol := range volumes {
 		if vol.PersistentVolumeClaim != nil {
-			volumeNames = append(volumeNames, vol.PersistentVolumeClaim.ClaimName)
+			volumeClaimNames = append(volumeClaimNames, vol.PersistentVolumeClaim.ClaimName)
 		}
 	}
 
@@ -76,7 +103,7 @@ func (s statefulSet) GetVolumeNames() (volumeNames []string) {
 	pvcTemplates := s.Spec.VolumeClaimTemplates
 	for _, vol := range pvcTemplates {
 		pvcPrefixName := fmt.Sprintf("%s-%s-", vol.GetName(), s.GetName())
-		volumeNames = append(volumeNames, pvcPrefixName)
+		volumeClaimNames = append(volumeClaimNames, pvcPrefixName)
 	}
 	return
 }
@@ -97,11 +124,11 @@ type job struct {
 	batchV1.Job
 }
 
-func (j job) GetVolumeNames() (volumeNames []string) {
+func (j job) GetVolumeClaimNames() (volumeClaimNames []string) {
 	volumes := j.Spec.Template.Spec.Volumes
 	for _, vol := range volumes {
 		if vol.PersistentVolumeClaim != nil {
-			volumeNames = append(volumeNames, vol.PersistentVolumeClaim.ClaimName)
+			volumeClaimNames = append(volumeClaimNames, vol.PersistentVolumeClaim.ClaimName)
 		}
 	}
 	return

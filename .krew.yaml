@@ -1,7 +1,7 @@
 apiVersion: krew.googlecontainertools.github.com/v1alpha2
 kind: Plugin
 metadata:
-  name: unused-volumes
+  name: kopy
 spec:
   version: "{{ .TagName }}"
   platforms:
@@ -9,42 +9,36 @@ spec:
       matchLabels:
         os: linux
         arch: amd64
-    {{addURIAndSha "https://github.com/dirathea/kubectl-unused-volumes/releases/download/{{ .TagName }}/kubectl-unused-volumes_linux_amd64.tar.gz" .TagName }}
+    {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_linux_amd64.tar.gz" .TagName }}
     files:
-    - from: "./unused-volumes"
+    - from: "./kopy"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "unused-volumes"
+    bin: "kopy"
   - selector:
       matchLabels:
         os: darwin
         arch: amd64
-    {{addURIAndSha "https://github.com/dirathea/kubectl-unused-volumes/releases/download/{{ .TagName }}/kubectl-unused-volumes_darwin_amd64.tar.gz" .TagName }}
+    {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_darwin_amd64.tar.gz" .TagName }}
     files:
-    - from: "./unused-volumes"
+    - from: "./kopy"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "unused-volumes"
+    bin: "kopy"
   - selector:
       matchLabels:
         os: windows
         arch: amd64
-    {{addURIAndSha "https://github.com/dirathea/kubectl-unused-volumes/releases/download/{{ .TagName }}/kubectl-unused-volumes_windows_amd64.zip" .TagName }}
+    {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_windows_amd64.zip" .TagName }}
     files:
-    - from: "/unused-volumes.exe"
+    - from: "/kopy.exe"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "unused-volumes.exe"
-  shortDescription: List unused PVCs
-  homepage: https://github.com/dirathea/kubectl-unused-volumes
+    bin: "kopy.exe"
+  shortDescription: Copy Contents from PVs
+  homepage: https://github.com/websi96/kubectl-kopy
   description: |
-    Kubectl plugins to gather all PVC and check whether it used in any workloads on cluster or not.
-    This plugin lists all PVCs that are not used by any
-        - DaemonSet
-        - Deployment
-        - Job
-        - StatefulSet
-    Thus it helps to find unused PersitentVolumes which just cost money.
+    Kubectl plugins to download content from a PV.

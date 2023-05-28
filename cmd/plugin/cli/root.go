@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dirathea/kubectl-unused-volumes/pkg/plugin"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/websi96/kubectl-kopy/pkg/plugin"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
@@ -17,21 +17,15 @@ var (
 	Opts                  plugin.Options
 	commandExample        = `
 	# Get all unused volumes in default namespace
-	kubectl unused-volumes
-
-	# Get all unused volumes in all namespaces
-	kubectl unused-volumes --all-namespaces
-
-	# Remove headers
-	kubectl unused-volumes --no-headers
-	`
+	kubectl kopy [PV] [LOCAL_DIR]
+`
 )
 
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "unused-volumes",
-		Short:         "",
-		Long:          `.`,
+		Use:           "kopy [PV] [LOCAL_DIR]",
+		Short:         "kopy is a kubectl plugin to copy files from a PersistentVolume to local directory",
+		Long:          `kopy is a kubectl plugin to copy files from a PersistentVolume to local directory`,
 		SilenceErrors: true,
 		Example:       commandExample,
 		SilenceUsage:  true,
@@ -44,7 +38,6 @@ func RootCmd() *cobra.Command {
 				return errors.Cause(err)
 			}
 			fmt.Println(output)
-
 			return nil
 		},
 	}
@@ -56,7 +49,7 @@ func RootCmd() *cobra.Command {
 	Opts = plugin.Options{
 		KubernetesConfigFlags: KubernetesConfigFlags,
 	}
-	cmd.Flags().BoolVar(&Opts.NoHeaders, "no-headers", false, "Skip header")
+	//cmd.Flags().BoolVar(&Opts.NoHeaders, "no-headers", false, "Skip header")
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	return cmd

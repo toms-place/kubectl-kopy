@@ -11,13 +11,19 @@ const (
 
 type Workload interface {
 	GetName() string
-	GetVolumeNames() []string
+	GetVolumeClaimNames() []string
 	// IsEmpty tells that the workload still has pod running
 	IsEmpty() bool
 }
 
-type Volume struct {
+type VolumeClaim struct {
 	v1.PersistentVolumeClaim
+	Reason    Reason
+	Workloads []Workload
+}
+
+type Volume struct {
+	v1.PersistentVolume
 	Reason    Reason
 	Workloads []Workload
 }

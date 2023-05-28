@@ -1,22 +1,17 @@
+# Usage
 
-## Usage
 The following assumes you have the plugin installed via
 
 ```shell
-kubectl krew install unused-volumes
+kubectl krew install kopy
 ```
 
-### Scan images in your current kubecontext
+## Scan pvs in your current kubecontext
 
 ```shell
-kubectl unused-volumes
-```
-
-### Scan images in another kubecontext
-
-```shell
-kubectl unused-volumes --context=context-name
+kubectl kopy
 ```
 
 ## How it works
-Gather all PVC and output all pvcs that doesn't belong to any workloads. Workloads including : Deployment, Job, Statefulset, DaemonSet. Other than this workload (such as CRD) will be **ignored and the volume will be listed as `No Reference`**.
+
+Gather all PVs and select a pv to download its content. If the content is empty, it means the PV is not used by any workloads.

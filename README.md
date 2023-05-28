@@ -1,4 +1,4 @@
-# kubectl-unused-volumes
+# kubectl-kopy
 
 A `kubectl` plugin to gather all PVC and output all pvcs that doesn't belong to any workloads.
 This plugins checks for standard kubernetes workloads : 
@@ -10,14 +10,14 @@ This plugins checks for standard kubernetes workloads :
 
 ## Quick Start
 
-Install unused-volumes via [krew](https://krew.sigs.k8s.io/)
+Install kopy via [krew](https://krew.sigs.k8s.io/)
 
 ```
-kubectl krew install unused-volumes
+kubectl krew install kopy
 
 # Scan for all unused volumes in current context and default namespace
 
-kubectl unused-volumes
+kubectl kopy
 ```
 
 ## Demo

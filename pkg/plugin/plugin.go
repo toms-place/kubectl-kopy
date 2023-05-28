@@ -3,11 +3,12 @@ package plugin
 import (
 	"context"
 	"strings"
+	"sync"
 
-	"github.com/dirathea/kubectl-unused-volumes/pkg/api"
-	"github.com/dirathea/kubectl-unused-volumes/pkg/workload"
 	"github.com/gosuri/uitable"
 	"github.com/pkg/errors"
+	"github.com/websi96/kubectl-kopy/pkg/api"
+	"github.com/websi96/kubectl-kopy/pkg/workload"
 	"golang.org/x/sync/errgroup"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -16,7 +17,6 @@ import (
 
 type Options struct {
 	KubernetesConfigFlags *genericclioptions.ConfigFlags
-	NoHeaders             bool
 }
 
 func RunPlugin(options Options) (output string, err error) {
@@ -33,9 +33,9 @@ func RunPlugin(options Options) (output string, err error) {
 		return
 	}
 
-	volumes, err := GetVolumes(clientset, *options.KubernetesConfigFlags.Namespace)
+	volumes, err := GetVolumeClaims(clientset, *options.KubernetesConfigFlags.Namespace)
 	if err != nil {
-		err = errors.Wrap(err, "failed to get all pvc in namespaces")
+		err = errors.Wrap(err, "failed to get all pvs")
 		return
 	}
 
@@ -44,8 +44,10 @@ func RunPlugin(options Options) (output string, err error) {
 		workload.GetAllDeployment,
 		workload.GetAllJobs,
 		workload.GetAllStatefulset,
+		workload.GetAllPods,
 	}
 
+	mu := &sync.Mutex{}
 	workloads := []api.Workload{}
 	fetchGroup, _ := errgroup.WithContext(context.Background())
 
@@ -54,7 +56,9 @@ func RunPlugin(options Options) (output string, err error) {
 		fetchGroup.Go(func() error {
 			lists, err := fetcherFunction(clientset, *options.KubernetesConfigFlags.Namespace)
 			if err == nil {
+				mu.Lock()
 				workloads = append(workloads, lists...)
+				mu.Unlock()
 			}
 			return err
 		})
@@ -73,11 +77,8 @@ func RunPlugin(options Options) (output string, err error) {
 			markVolumeAsZeroReplica(volumes, wk)
 		}
 	}
-
 	table := uitable.New()
-	if !options.NoHeaders {
-		table.AddRow("Name", "Volume Name", "Size", "Reason", "Used By")
-	}
+	table.AddRow("Name", "Volume Name", "Size", "Reason", "Used By")
 
 	for _, p := range volumes {
 		if p != nil {
@@ -85,13 +86,14 @@ func RunPlugin(options Options) (output string, err error) {
 			table.AddRow(p.Name, p.Spec.VolumeName, storageSize.String(), p.Reason, workload.Join(p.Workloads, ","))
 		}
 	}
+
 	output = table.String()
 
 	return
 }
 
-func removeVolume(volumes []*api.Volume, workload api.Workload) {
-	for _, claim := range workload.GetVolumeNames() {
+func removeVolume(volumes []*api.VolumeClaim, workload api.Workload) {
+	for _, claim := range workload.GetVolumeClaimNames() {
 		for idx, vol := range volumes {
 			if vol != nil {
 				if strings.HasPrefix(vol.GetName(), claim) {
@@ -102,8 +104,8 @@ func removeVolume(volumes []*api.Volume, workload api.Workload) {
 	}
 }
 
-func markVolumeAsZeroReplica(volumes []*api.Volume, workload api.Workload) {
-	for _, claim := range workload.GetVolumeNames() {
+func markVolumeAsZeroReplica(volumes []*api.VolumeClaim, workload api.Workload) {
+	for _, claim := range workload.GetVolumeClaimNames() {
 		for idx, vol := range volumes {
 			if vol != nil {
 				if strings.HasPrefix(vol.GetName(), claim) {

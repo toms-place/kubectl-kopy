@@ -1,11 +1,11 @@
-project_name: kubectl-unused-volumes
+project_name: kubectl-kopy
 release:
   github:
-    owner: dirathea
-    name: kubectl-unused-volumes
+    owner: websi96
+    name: kubectl-kopy
 builds:
-  - id: kubectl-unused-volumes
-    binary: unused-volumes
+  - id: kubectl-kopy
+    binary: kopy
     goos:
     - linux
     - windows
@@ -18,11 +18,11 @@ builds:
       - GO111MODULE=on
     main: cmd/plugin/main.go
     ldflags: -s -w
-      -X github.com/dirathea/kubectl-unused-volumes/pkg/version.version=
+      -X github.com/websi96/kubectl-kopy/pkg/version.version=
 archives:
-  - id: kubectl-unused-volumes
+  - id: kubectl-kopy
     builds:
-    - kubectl-unused-volumes
+    - kubectl-kopy
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
     - goos: windows

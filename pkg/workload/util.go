@@ -3,7 +3,7 @@ package workload
 import (
 	"strings"
 
-	"github.com/dirathea/kubectl-unused-volumes/pkg/api"
+	"github.com/websi96/kubectl-kopy/pkg/api"
 )
 
 func Join(workloads []api.Workload, sep string) string {

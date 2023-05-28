@@ -7,7 +7,7 @@ test:
 
 .PHONY: bin
 bin: fmt vet
-	go build -o bin/unused-volumes github.com/dirathea/kubectl-unused-volumes/cmd/plugin
+	go build -o bin/kubectl-kopy github.com/websi96/kubectl-kopy/cmd/plugin
 
 .PHONY: fmt
 fmt:
