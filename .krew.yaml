@@ -11,33 +11,33 @@ spec:
         arch: amd64
     {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_linux_amd64.tar.gz" .TagName }}
     files:
-    - from: "./kopy"
+    - from: "./kubectl-kopy"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "kopy"
+    bin: "kubectl-kopy"
   - selector:
       matchLabels:
         os: darwin
         arch: amd64
     {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_darwin_amd64.tar.gz" .TagName }}
     files:
-    - from: "./kopy"
+    - from: "./kubectl-kopy"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "kopy"
+    bin: "kubectl-kopy"
   - selector:
       matchLabels:
         os: windows
         arch: amd64
     {{addURIAndSha "https://github.com/websi96/kubectl-kopy/releases/download/{{ .TagName }}/kubectl-kopy_windows_amd64.zip" .TagName }}
     files:
-    - from: "/kopy.exe"
+    - from: "/kubectl-kopy.exe"
       to: "."
     - from: LICENSE
       to: "."
-    bin: "kopy.exe"
+    bin: "kubectl-kopy.exe"
   shortDescription: Copy Contents from PVs
   homepage: https://github.com/websi96/kubectl-kopy
   description: |
